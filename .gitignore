@@ -1,0 +1,32 @@
+# Скомпилированный бинарник конвертера
+/ver2fal
+
+# Go
+*.test
+
+# Сгенерированные нетлисты и схемы (создаются `make json` / `make circuits`)
+verilog/*.json
+verilog/*_rtl.txt
+verilog/*.vcd
+verilog/out.svg
+verilog/a.out
+/adder4.txt
+/counter.txt
+/mux4.txt
+/shiftreg.txt
+/uart_tx.txt
+
+# Веб-фронтенд (устанавливается и собирается локально)
+vkr/node_modules/
+vkr/dist/
+npm-debug.log*
+
+# Сборки Typst
+vkr/main*.pdf
+
+# Прочее
+*.bkp
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

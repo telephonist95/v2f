@@ -1,0 +1,9 @@
+# Синтез для ver2fal: только поддерживаемые ячейки
+# Использование: yosys -D TOP=<module> -D SRC=<file.sv> -D OUT=<file.json> synth.ys
+
+read_verilog -sv $::env(SRC)
+synth -top $::env(TOP) -run :fine
+dfflegalize -cell $_SDFFE_PN0P_ 01
+abc -g AND,NAND,OR,NOR,XOR,XNOR,ANDNOT,ORNOT,MUX
+clean
+write_json $::env(OUT)

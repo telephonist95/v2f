@@ -1,0 +1,98 @@
+digraph architecture {
+    rankdir=TB;
+    fontname="Arial";
+    fontsize=14;
+    nodesep=0.8;
+    ranksep=1.0;
+    compound=true;
+    node [fontname="Arial", fontsize=12, shape=box, style="rounded,filled", fillcolor="#f0f4ff", color="#4466aa"];
+    edge [fontname="Arial", fontsize=10, color="#666666"];
+
+    // Вход
+    verilog [label="Описание на Verilog/SystemVerilog", shape=note, fillcolor="#fff8e0"];
+
+    // Невидимые узлы для разводки стрелок от verilog
+    split [shape=point, width=0.01, height=0.01];
+    verilog -> split [arrowhead=none];
+
+    // Две ветви
+    subgraph cluster_synthesis {
+        label="\nВетвь синтеза\n ";
+        labelloc=t;
+        labeljust=l;
+        style="rounded";
+        color="#4466aa";
+        fontcolor="#4466aa";
+        fontsize=13;
+        margin=20;
+
+        yosys [label="Синтезатор Yosys", fillcolor="#dde8ff"];
+        json [label="Список соединений\n(JSON)", shape=note, fillcolor="#fff8e0"];
+
+        subgraph cluster_converter {
+            label="\nКонвертер (Go)\n ";
+            labelloc=t;
+            labeljust=l;
+            style="rounded";
+            color="#88aadd";
+            fontcolor="#88aadd";
+            fontsize=12;
+            margin=16;
+
+            parser [label="Модуль разбора\nсписка соединений\n(yosys.go)"];
+            layout [label="Модуль размещения\nи трассировки\n(layout.go)"];
+            abstractor [label="Модуль\nRTL-абстракции\n(abstractor.go)"];
+            cellgen [label="Модуль генерации\nмоделей ячеек\n(cellgen.go)"];
+            falstad_mod [label="Модуль формирования\nвыходного файла\n(falstad.go)"];
+
+            // Внутренняя структура
+            parser -> layout;
+            parser -> abstractor;
+            cellgen -> layout [dir=both, style=dashed, label="модели"];
+            cellgen -> abstractor [dir=both, style=dashed, label="модели"];
+            layout -> falstad_mod [label="вентильное\nпредставление"];
+            abstractor -> falstad_mod [label="RTL-\nпредставление"];
+        }
+
+        gate_out [label="Вентильная схема\n(файл Falstad)", shape=note, fillcolor="#e8ffe0"];
+        rtl_out [label="RTL-схема\n(файл Falstad)", shape=note, fillcolor="#e8ffe0"];
+
+        // Связи внутри ветви синтеза
+        yosys -> json [label="write_json"];
+        json -> parser;
+        falstad_mod -> gate_out;
+        falstad_mod -> rtl_out;
+    }
+
+    subgraph cluster_simulation {
+        label="\nВетвь поведенческой симуляции\n ";
+        labelloc=t;
+        labeljust=l;
+        style="rounded";
+        color="#44aa66";
+        fontcolor="#44aa66";
+        fontsize=13;
+        margin=20;
+
+        verilator [label="Компилятор Verilator", fillcolor="#ddffe8"];
+        systemc [label="Среда исполнения SystemC", fillcolor="#ddffe8"];
+        vcd [label="Временная диаграмма\n(файл VCD)", shape=note, fillcolor="#e8ffe0"];
+
+        verilator -> systemc [label="C++/SystemC"];
+        systemc -> vcd [label="трассировка"];
+    }
+
+    // Выходные представления
+    falstad_view [label="Интерактивная симуляция\nвентильной схемы\n(Falstad)", shape=component, fillcolor="#ffe8e0"];
+    rtl_view [label="Интерактивная симуляция\nRTL-схемы\n(Falstad)", shape=component, fillcolor="#ffe8e0"];
+    vcd_view [label="Просмотр временных\nдиаграмм\n(GTKWave)", shape=component, fillcolor="#ffe8e0"];
+
+    // Входные стрелки - через невидимый split-узел
+    split -> yosys [lhead=cluster_synthesis, label="исходный код"];
+    split -> verilator [lhead=cluster_simulation, label="исходный код"];
+
+    // Выходные стрелки
+    gate_out -> falstad_view;
+    rtl_out -> rtl_view;
+    vcd -> vcd_view;
+}

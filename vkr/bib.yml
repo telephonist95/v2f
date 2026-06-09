@@ -1,0 +1,129 @@
+ieee-1666-2023:
+  type: Book
+  title: "IEEE Standard for Standard SystemC Language Reference Manual. IEEE Std 1666-2023"
+  publisher:
+    name: "New York: IEEE, 2023"
+
+ieee-1364-2005:
+  type: Book
+  title: "IEEE Standard for Verilog Hardware Description Language. IEEE Std 1364-2005"
+  publisher:
+    name: "New York: IEEE, 2006"
+
+verilator-guide:
+  type: Web
+  title: "Verilator User's Guide"
+  url:
+    value: https://verilator.org/guide/latest/
+    date: 2026-03-16
+
+yosys-manual:
+  type: Web
+  title: "Yosys Open SYnthesis Suite Documentation"
+  url:
+    value: https://yosyshq.readthedocs.io/
+    date: 2026-03-12
+
+falstad-simulator:
+  type: Web
+  title: "Falstad Circuit Simulator"
+  url:
+    value: https://www.falstad.com/circuit/
+    date: 2026-03-19
+
+falstad-source:
+  type: Web
+  title: "Falstad Circuit Simulator Source Code"
+  url:
+    value: https://github.com/pfalstad/circuitjs1
+    date: 2026-03-20
+
+go-spec:
+  type: Web
+  title: "The Go Programming Language Specification"
+  url:
+    value: https://go.dev/ref/spec
+    date: 2026-03-24
+
+yosys-simcells:
+  type: Web
+  title: "Yosys Simulation Cell Library Reference"
+  url:
+    value: https://yosyshq.readthedocs.io/projects/yosys/en/latest/cell_reference.html
+    date: 2026-03-13
+
+systemc-overview:
+  type: Web
+  title: "SystemC overview"
+  url:
+    value: https://systemc.org/overview/systemc/
+    date: 2026-03-17
+
+slinkin-2017:
+  type: Article
+  title: "Анализ современных методов тестирования и верификации проектов сверхбольших интегральных схем"
+  author: "Слинкин Д.И."
+  parent:
+    type: Periodical
+    title: "Программные продукты и системы"
+    issue: 3
+  date: 2017
+  page-range: 401-408
+
+salter-2009:
+  type: Article
+  title: "Abstraction and extensibility in digital logic simulation software"
+  author: ["Salter R.M.", "Donaldson J.L."]
+  parent:
+    type: Proceedings
+    title: "Proceedings of the 40th ACM Technical Symposium on Computer Science Education"
+  date: 2009
+  page-range: 332-336
+
+acai-verilator-2022:
+  type: Article
+  title: "Design of High-performance SoC Simulation Model Based on Verilator"
+  parent:
+    type: Proceedings
+    title: "Proceedings of the 5th International Conference on Algorithms, Computing and Artificial Intelligence"
+  date: 2022
+
+logisim-evolution:
+  type: Web
+  title: "Logisim Evolution"
+  url:
+    value: https://github.com/logisim-evolution/logisim-evolution
+    date: 2026-03-21
+
+netlistsvg:
+  type: Web
+  title: "Netlistsvg: draws an SVG schematic from a JSON netlist"
+  url:
+    value: https://github.com/nturley/netlistsvg
+    date: 2026-03-22
+
+digital-simulator:
+  type: Web
+  title: "Digital: A digital logic designer and circuit simulator"
+  url:
+    value: https://github.com/hneemann/Digital
+    date: 2026-03-23
+
+gost-7-32:
+  type: Book
+  title: "ГОСТ 7.32-2017. Система стандартов по информации, библиотечному и издательскому делу. Отчет о научно-исследовательской работе. Структура и правила оформления"
+  publisher:
+    name: "М.: Стандартинформ, 2017"
+
+gost-19-701:
+  type: Book
+  title: "ГОСТ 19.701-90. Единая система программной документации. Схемы алгоритмов, программ, данных и систем"
+  publisher:
+    name: "М.: Стандартинформ, 1990"
+
+qemu-docs:
+  type: Web
+  title: "QEMU documentation"
+  url:
+    value: https://www.qemu.org/documentation/
+    date: 2026-03-15

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0"
+       demote-non-dropping-particle="sort-only" default-locale="ru-RU">
+  <info>
+    <title>GOST R 7.0.5-2008 (numeric, no hanging indent)</title>
+    <id>custom-gost-no-hanging</id>
+    <updated>2025-01-01T00:00:00+00:00</updated>
+  </info>
+
+  <locale xml:lang="ru">
+    <terms>
+      <term name="accessed">дата обращения</term>
+      <term name="online">Электронный ресурс</term>
+      <term name="page" form="short">С.</term>
+      <term name="issue" form="short">№</term>
+    </terms>
+  </locale>
+
+  <macro name="author">
+    <names variable="author">
+      <name initialize-with="." sort-separator=" " name-as-sort-order="all"/>
+    </names>
+  </macro>
+
+  <macro name="title">
+    <text variable="title"/>
+  </macro>
+
+  <macro name="issued">
+    <date variable="issued">
+      <date-part name="year"/>
+    </date>
+  </macro>
+
+  <macro name="publisher">
+    <group delimiter=", ">
+      <text variable="publisher-place"/>
+      <text variable="publisher"/>
+      <text macro="issued"/>
+    </group>
+  </macro>
+
+  <macro name="access">
+    <choose>
+      <if variable="URL">
+        <group prefix=" [" suffix="]">
+          <text term="online"/>
+        </group>
+        <group prefix=". URL: ">
+          <text variable="URL"/>
+        </group>
+        <group prefix=" (" suffix=")">
+          <text term="accessed"/>
+          <date prefix=": " variable="accessed">
+            <date-part name="day" form="numeric-leading-zeros" suffix="."/>
+            <date-part name="month" form="numeric-leading-zeros" suffix="."/>
+            <date-part name="year"/>
+          </date>
+        </group>
+      </if>
+    </choose>
+  </macro>
+
+  <macro name="pages">
+    <group prefix=". ">
+      <label variable="page" form="short" prefix="" suffix=" "/>
+      <text variable="page"/>
+    </group>
+  </macro>
+
+  <citation collapse="citation-number">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout prefix="[" suffix="]" delimiter=",">
+      <text variable="citation-number"/>
+    </layout>
+  </citation>
+
+  <bibliography entry-spacing="0">
+    <sort>
+      <key variable="citation-number"/>
+    </sort>
+    <layout suffix=".">
+      <text variable="citation-number" suffix=". "/>
+      <choose>
+        <if type="book">
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text macro="title"/>
+            <text macro="publisher"/>
+          </group>
+        </if>
+        <else-if type="article-journal article" match="any">
+          <group delimiter=" // ">
+            <group delimiter=". ">
+              <text macro="author"/>
+              <text macro="title"/>
+            </group>
+            <group delimiter=". ">
+              <text variable="container-title"/>
+              <text macro="issued"/>
+              <text variable="issue" prefix="№ "/>
+            </group>
+          </group>
+          <text macro="pages"/>
+        </else-if>
+        <else-if type="paper-conference" match="any">
+          <group delimiter=" // ">
+            <group delimiter=". ">
+              <text macro="author"/>
+              <text macro="title"/>
+            </group>
+            <text variable="container-title"/>
+          </group>
+          <group prefix=". ">
+            <text macro="issued"/>
+          </group>
+          <text macro="pages"/>
+        </else-if>
+        <else>
+          <group delimiter=". ">
+            <text macro="author"/>
+            <text macro="title"/>
+          </group>
+          <text macro="access"/>
+        </else>
+      </choose>
+    </layout>
+  </bibliography>
+</style>

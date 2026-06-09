@@ -1,0 +1,151 @@
+@startuml
+<style>
+activityDiagram {
+    activity {
+        FontStyle italic
+        RoundCorner 0
+    }
+    diamond {
+        FontStyle italic
+        BackgroundColor white
+        BorderColor black
+    }
+}
+</style>
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName "GOST2304 Type B"
+skinparam defaultFontSize 14
+skinparam defaultFontStyle italic
+skinparam conditionStyle InsideDiamond
+
+skinparam activity {
+        FontStyle italic
+    BackgroundColor white
+    BorderColor black
+    FontColor black
+    ArrowColor black
+    DiamondBackgroundColor white
+    DiamondBorderColor black
+    DiamondFontSize 11
+    DiamondFontStyle italic
+}
+
+skinparam ActivityBorderThickness 2
+skinparam ArrowThickness 2
+
+title Алгоритм размещения компонентов
+
+:Начало;
+
+:Считать модуль из JSON
+(ParseDesign);
+
+while (i < len\n(cells)?) is (да)
+    if (IsSequential\nCell?) then (да)
+        :Добавить\nв список ffCells;
+    else (нет)
+        :Добавить\nв список combCells;
+    endif
+endwhile (нет)
+
+:Построить карту драйверов:
+для каждой цепи определить
+ячейку-источник (netDriver);
+
+:Определить исходные цепи:
+входные порты модуля +
+выходы Q всех триггеров;
+
+while (i < len\n(combCells)?) is (да)
+    :computeDepth(cell):
+    depth = max(depth\nзависимостей) + 1;
+endwhile (нет)
+
+:Сортировка combCells:
+1) по depth  2) по ID выхода;
+
+:Сортировка ffCells:
+по ID выхода;
+
+:Назначить столбцы:
+col 0 — входные порты
+col 1..D — комб. (depth + 1)
+col D+2 — триггеры
+col D+3 — выходные порты;
+
+:В каждом столбце назначить
+строку (row) по порядку;
+
+:Развернуть многоразрядные
+порты в однобитовые элементы;
+
+while (ch < numColumns\n- 1?) is (да)
+    :Подсчитать adjacent-треки
+    и bus-drop-треки
+    проходящих цепей;
+endwhile (нет)
+
+while (col < numColumns?) is (да)
+    if (maxPins >\nRowSpacing?) then (да)
+        :Увеличить интервал
+        colRowSpacing;
+    else (нет)
+        :Стандартный
+        интервал 128 px;
+    endif
+endwhile (нет)
+
+:Вычислить ширину каналов:
+chanWidth = (tracks + 4) * шаг
++ 2 * шаг (разделитель зон);
+
+if (halfHeight >\nbusGap?) then (да)
+    :Увеличить область
+    шины (busGap);
+else (нет)
+    :Стандартный
+    зазор 96 px;
+endif
+
+:Вычислить X-координаты
+столбцов по ширинам каналов;
+
+:Вычислить baseY с учётом
+busGap и числа шинных цепей;
+
+while (i < len\n(components)?) is (да)
+    if (Входной\nпорт?) then (да)
+        if (isClock?) then (да)
+            :Разместить как
+            Clock Rail;
+        else (нет)
+            :Разместить как
+            Logic Input;
+        endif
+    elseif (isComb?) then (да)
+        if (isChipElm?) then (да)
+            :Разместить как чип
+            с пинами слева/справа;
+        else (нет)
+            :Разместить как
+            вентиль (GateElm);
+        endif
+    elseif (isFF?) then (да)
+        :Разместить как ChipElm
+        в столбце триггеров;
+    else (выходной порт)
+        :Разместить как
+        Logic Output;
+    endif
+endwhile (нет)
+
+:Зарегистрировать пины
+в таблице цепей (nets);
+
+:Собрать используемые
+модели CustomLogic;
+
+:Конец;
+
+@enduml

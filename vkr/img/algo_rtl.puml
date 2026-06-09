@@ -1,0 +1,163 @@
+@startuml
+<style>
+activityDiagram {
+    activity {
+        FontStyle italic
+        RoundCorner 0
+    }
+    diamond {
+        FontStyle italic
+        BackgroundColor white
+        BorderColor black
+    }
+}
+</style>
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName "GOST2304 Type B"
+skinparam defaultFontSize 14
+skinparam defaultFontStyle italic
+skinparam conditionStyle InsideDiamond
+
+skinparam activity {
+        FontStyle italic
+    BackgroundColor white
+    BorderColor black
+    FontColor black
+    ArrowColor black
+    DiamondBackgroundColor white
+    DiamondBorderColor black
+    DiamondFontSize 11
+    DiamondFontStyle italic
+}
+
+skinparam ActivityBorderThickness 2
+skinparam ArrowThickness 2
+
+title Алгоритм построения RTL-представления
+
+:Начало;
+
+while (i < len\n(cells)?) is (да)
+    if (IsSequential\nCell?) then (да)
+        :extractFF():
+        разобрать имя ячейки,
+        извлечь baseType, params,
+        clk, rst, d, q, en;
+
+        if (fd != nil?) then (да)
+            :Добавить в
+            список ffs;
+        else (нет)
+            :Пропустить;
+        endif
+    else (нет)
+        :Добавить в
+        список combs;
+    endif
+endwhile (нет)
+
+while (i < len\n(ffs)?) is (да)
+    :Сформировать ключ:
+    {baseType, params,
+    clkNet, rstNet, enNet};
+
+    if (groups[key]\n!= nil?) then (да)
+        :Добавить триггер
+        в существующий
+        регистр;
+    else (нет)
+        :Создать новый
+        регистр;
+    endif
+endwhile (нет)
+
+:Отсортировать триггеры
+в каждом регистре
+по ID выхода Q;
+
+while (i < len\n(regs)?) is (да)
+    :generateRegisterModel():
+    сформировать правила
+    CustomLogic с переменными
+    захвата по ширине и типу;
+endwhile (нет)
+
+:Определить входы COMB:
+порты данных модуля +
+выходы Q регистров;
+
+:Определить выходы COMB:
+входы D регистров +
+выходные порты модуля;
+
+while (i < len\n(ctrlNets)?) is (да)
+    if (inputPort\nNetSet[nid]?) then (да)
+        :Pass-through:
+        добавить как вход
+        и выход COMB
+        с capture-переменной;
+    else (нет)
+        :Comb-driven:
+        добавить как обычный
+        выход COMB;
+    endif
+endwhile (нет)
+
+:Топологическая сортировка
+комбинационных ячеек (DFS);
+
+if (needComb?) then (нет)
+    :Пропустить генерацию
+    таблицы истинности;
+else (да)
+
+    if (nDataIn\n<= 12?) then (да)
+
+        while (combo <\n2^nDataIn?) is (да)
+            :Установить значения
+            входных цепей побитно;
+
+            while (i < len\n(topoOrder)?) is (да)
+                :evalCombCell():
+                вычислить выход
+                по типу ячейки;
+            endwhile (нет)
+
+            :Сформировать правило:
+            данные -> 0/1,
+            pass-through -> capture;
+        endwhile (нет)
+
+    else (нет)
+        :Визуальный блок:
+        только pass-through
+        правила, без данных;
+    endif
+
+endif
+
+:Упорядочить выходы COMB
+по порядку входов REG:
+C, R, D0..Dn, E;
+
+:Назначить новые ID цепей
+всем выходам COMB
+(combOutRemap, ptOutRemap);
+
+:Переподключить входы REG
+и выходные порты
+на новые ID;
+
+:Собрать синтетический модуль:
+входные порты — без изменений,
+выходные — с переназначением,
+ячейка COMB + ячейки REG;
+
+:Передать в Convert()
+для размещения
+и трассировки;
+
+:Конец;
+
+@enduml

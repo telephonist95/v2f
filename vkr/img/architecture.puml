@@ -1,0 +1,106 @@
+@startuml
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName "Arial"
+skinparam defaultFontSize 13
+skinparam ArrowColor #555555
+skinparam ArrowThickness 1.5
+
+skinparam rectangle {
+    BackgroundColor #f0f4ff
+    BorderColor #4466aa
+    RoundCorner 10
+}
+
+skinparam package {
+    BackgroundColor #fafcff
+    BorderColor #4466aa
+    FontColor #4466aa
+    FontSize 14
+    FontStyle bold
+}
+
+skinparam component {
+    BackgroundColor #ffe8e0
+    BorderColor #cc6644
+    RoundCorner 8
+}
+
+skinparam note {
+    BackgroundColor #fff8e0
+    BorderColor #ccaa44
+}
+
+title Структурная схема программной системы
+
+note as N1 #fff8e0
+  Описание на
+  Verilog / SystemVerilog
+end note
+
+package "Ветвь синтеза" as synthesis {
+    rectangle "Синтезатор\n**Yosys**" as yosys #dde8ff
+
+    note as json #fff8e0
+      Список соединений
+      (JSON)
+    end note
+
+    package "Конвертер (Go)" as converter {
+        rectangle "Разбор списка\nсоединений\n//yosys.go//" as parser
+        rectangle "Размещение\nи трассировка\n//layout.go//" as layout
+        rectangle "RTL-абстракция\n//abstractor.go//" as abstractor
+        rectangle "Генерация моделей\nячеек\n//cellgen.go//" as cellgen
+        rectangle "Формирование\nвыходного файла\n//falstad.go//" as falstad_mod
+    }
+
+    note as gate_out #e8ffe0
+      Вентильная схема
+      (файл Falstad)
+    end note
+
+    note as rtl_out #e8ffe0
+      RTL-схема
+      (файл Falstad)
+    end note
+}
+
+package "Ветвь поведенческой симуляции" as simulation #fafffa {
+    rectangle "Компилятор\n**Verilator**" as verilator #ddffe8
+    rectangle "Среда исполнения\n**SystemC**" as systemc #ddffe8
+
+    note as vcd #e8ffe0
+      Временная диаграмма
+      (файл VCD)
+    end note
+}
+
+component "Интерактивная симуляция\nвентильной схемы\n(Falstad)" as falstad_view
+component "Интерактивная симуляция\nRTL-схемы\n(Falstad)" as rtl_view
+component "Просмотр временных\nдиаграмм\n(GTKWave)" as vcd_view
+
+' Ветвь синтеза
+N1 -down-> yosys : исходный код
+yosys -down-> json : write_json
+json -down-> parser
+
+parser -down-> layout
+parser -down-> abstractor
+cellgen .left.> layout : модели
+cellgen .right.> abstractor : модели
+layout -down-> falstad_mod : вентильное\nпредставление
+abstractor -down-> falstad_mod : RTL-\nпредставление
+
+falstad_mod -down-> gate_out
+falstad_mod -down-> rtl_out
+
+gate_out -down-> falstad_view
+rtl_out -down-> rtl_view
+
+' Ветвь симуляции
+N1 -down-> verilator : исходный код
+verilator -down-> systemc : C++ / SystemC
+systemc -down-> vcd : трассировка
+vcd -down-> vcd_view
+
+@enduml

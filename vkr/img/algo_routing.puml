@@ -1,0 +1,138 @@
+@startuml
+<style>
+activityDiagram {
+    activity {
+        FontStyle italic
+        RoundCorner 0
+    }
+    diamond {
+        FontStyle italic
+        BackgroundColor white
+        BorderColor black
+    }
+}
+</style>
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultFontName "GOST2304 Type B"
+skinparam defaultFontSize 14
+skinparam defaultFontStyle italic
+skinparam conditionStyle InsideDiamond
+
+skinparam activity {
+        FontStyle italic
+    BackgroundColor white
+    BorderColor black
+    FontColor black
+    ArrowColor black
+    DiamondBackgroundColor white
+    DiamondBorderColor black
+    DiamondFontSize 11
+    DiamondFontStyle italic
+}
+
+skinparam ActivityBorderThickness 2
+skinparam ArrowThickness 2
+
+title Алгоритм трассировки соединений
+
+:Начало;
+
+:Инициализировать аллокатор:
+adjTracks[], busTracks[],
+busTrackY := baseY - busGap;
+
+:Отсортировать все
+цепи (nets) по ID;
+
+while (nid < maxNet?) is (да)
+
+    :Определить источник
+    (driver) и приёмники (sinks);
+
+    if (driver ==\nnil?) then (да)
+        :Пропустить цепь;
+    else (нет)
+
+        if (allAdjacent?) then (да)
+
+            :allocChanTrack(ch):
+            выделить трек в левой
+            зоне канала;
+
+            :Провод: источник →
+            горизонталь до трека;
+
+            :Собрать Y-координаты
+            источника и приёмников,
+            отсортировать;
+
+            while (i < len(ys)\n- 1?) is (да)
+                :Провод: вертикальный
+                сегмент ствола
+                от Y[i] до Y[i+1];
+            endwhile (нет)
+
+            while (j < len\n(sinks)?) is (да)
+                :Провод: горизонталь
+                от трека к приёмнику;
+            endwhile (нет)
+
+        else (нет)
+
+            :allocBusY():
+            выделить Y-координату
+            на горизонтальной шине;
+
+            :allocBusDropTrack(srcCh):
+            выделить трек в правой
+            зоне канала источника;
+
+            :Провод: источник →
+            горизонталь до трека →
+            вертикаль вверх до шины;
+
+            :Сгруппировать приёмники
+            по каналам назначения
+            (dropGroups);
+
+            while (g < len\n(groups)?) is (да)
+
+                :allocBusDropTrack(ch):
+                выделить трек в правой
+                зоне канала группы;
+
+                :Собрать Y-координаты:
+                busY + приёмники группы;
+
+                while (i < len(ys)\n- 1?) is (да)
+                    :Провод: вертикальный
+                    сегмент спуска
+                    от Y[i] до Y[i+1];
+                endwhile (нет)
+
+                while (j < len\n(sinks)?) is (да)
+                    :Провод: горизонталь
+                    от трека к приёмнику;
+                endwhile (нет)
+
+            endwhile (нет)
+
+            :Собрать все X точек
+            подключения к шине,
+            отсортировать;
+
+            while (i < len(xs)\n- 1?) is (да)
+                :Провод: горизонтальный
+                сегмент шины
+                от X[i] до X[i+1];
+            endwhile (нет)
+
+        endif
+
+    endif
+endwhile (нет)
+
+:Конец;
+
+@enduml

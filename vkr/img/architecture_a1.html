@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1190, initial-scale=1">
+<title>Структурная схема программной системы</title>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Sans+Narrow:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue-bg: #e9eef8;
+    --blue-border: #5b7bb4;
+    --blue-text: #2d4a7a;
+    --blue-node: #d4deef;
+    --blue-node-border: #7a9ac9;
+
+    --green-bg: #e6f3ea;
+    --green-border: #5aaa72;
+    --green-text: #2a6b40;
+    --green-node: #c8e6d0;
+    --green-node-border: #6db87f;
+
+    --yellow-bg: #fef9e7;
+    --yellow-border: #c9a825;
+    --yellow-text: #6b5a10;
+
+    --orange-bg: #fef0e8;
+    --orange-border: #c4714a;
+    --orange-text: #6b3520;
+
+    --output-bg: #fdf5f0;
+    --output-border: #b86a48;
+
+    --line-color: #4a5568;
+    --line-dash: #8a95a5;
+    --bg: #ffffff;
+    --text: #1a202c;
+    --text-secondary: #4a5568;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    font-family: 'PT Sans', sans-serif;
+    color: var(--text);
+    width: 1190px;
+    height: 842px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .diagram {
+    width: 1190px;
+    height: 880px;
+    position: relative;
+    padding: 24px 32px;
+  }
+
+  .title {
+    text-align: center;
+    font-family: 'PT Sans Narrow', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    color: var(--text);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  /* SVG canvas for arrows */
+  svg.arrows {
+    position: absolute;
+    top: 0; left: 0;
+    width: 1190px;
+    height: 880px;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Nodes */
+  .node {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.3;
+    z-index: 3;
+    border-radius: 6px;
+    border-width: 1.5px;
+    border-style: solid;
+  }
+
+  .node .label {
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+
+  .node .sublabel {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .node--input {
+    background: var(--yellow-bg);
+    border-color: var(--yellow-border);
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  .node--data {
+    background: var(--yellow-bg);
+    border-color: var(--yellow-border);
+    border-radius: 4px;
+  }
+
+  .node--tool {
+    background: var(--blue-node);
+    border-color: var(--blue-node-border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .node--tool-green {
+    background: var(--green-node);
+    border-color: var(--green-node-border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .node--module {
+    background: #f4f7fc;
+    border-color: var(--blue-node-border);
+    border-width: 1px;
+  }
+
+  .node--output-data {
+    background: #eaf5ed;
+    border-color: #6db87f;
+    border-radius: 4px;
+  }
+
+  .node--output {
+    background: var(--output-bg);
+    border-color: var(--output-border);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+
+  /* Group boxes */
+  .group {
+    position: absolute;
+    border-radius: 12px;
+    border-width: 2px;
+    border-style: solid;
+    z-index: 1;
+  }
+
+  .group__label {
+    position: absolute;
+    top: 8px;
+    left: 14px;
+    font-family: 'PT Sans Narrow', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+  }
+
+  .group--synth {
+    background: var(--blue-bg);
+    border-color: var(--blue-border);
+  }
+  .group--synth .group__label { color: var(--blue-text); }
+
+  .group--conv {
+    background: rgba(212, 222, 239, 0.25);
+    border-color: var(--blue-node-border);
+    border-style: dashed;
+  }
+  .group--conv .group__label { color: var(--blue-node-border); }
+
+  .group--sim {
+    background: var(--green-bg);
+    border-color: var(--green-border);
+  }
+  .group--sim .group__label { color: var(--green-text); }
+
+  .group--results {
+    background: rgba(253, 245, 240, 0.4);
+    border-color: var(--output-border);
+    border-style: dashed;
+    border-width: 1.5px;
+  }
+  .group--results .group__label { color: var(--orange-text); font-size: 14px; }
+
+  /* Split dot */
+  .split-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    background: var(--line-color);
+    border-radius: 50%;
+    z-index: 4;
+  }
+</style>
+</head>
+<body>
+<div class="diagram">
+  <div class="title">Структурная схема программной системы</div>
+
+  <!-- INPUT -->
+  <div class="node node--input" style="left:440px; top:56px; width:310px; height:34px;">
+    <span class="label">Описание на Verilog / SystemVerilog</span>
+  </div>
+
+  <!-- Split dot -->
+  <div class="split-dot" style="left:591px; top:108px;"></div>
+
+  <!-- ===== LEFT: SYNTHESIS BRANCH ===== -->
+  <div class="group group--synth" style="left:28px; top:126px; width:560px; height:570px;"></div>
+  <div class="group__label" style="position:absolute; top:132px; left:42px; font-family:'PT Sans Narrow',sans-serif; font-weight:700; font-size:15px; color:var(--blue-text); z-index:5;">ВЕТВЬ СИНТЕЗА</div>
+
+  <!-- Yosys -->
+  <div class="node node--tool" style="left:225px; top:160px; width:180px; height:36px;">
+    <span class="label">Синтезатор Yosys</span>
+  </div>
+
+  <!-- JSON -->
+  <div class="node node--data" style="left:220px; top:218px; width:190px; height:32px;">
+    <span class="label" style="font-weight:400;">Список соединений (JSON)</span>
+  </div>
+
+  <!-- Converter group -->
+  <div class="group group--conv" style="left:48px; top:268px; width:520px; height:340px;"></div>
+  <div class="group__label" style="position:absolute; top:274px; left:62px; font-family:'PT Sans Narrow',sans-serif; font-weight:700; font-size:14px; color:var(--blue-node-border); z-index:5;">КОНВЕРТЕР (Go)</div>
+
+  <!-- Parser -->
+  <div class="node node--module" style="left:215px; top:300px; width:200px; height:42px;">
+    <span class="label">Разбор списка соединений</span>
+    <span class="sublabel">yosys.go</span>
+  </div>
+
+  <!-- Layout -->
+  <div class="node node--module" style="left:68px; top:370px; width:200px; height:48px;">
+    <span class="label">Размещение и трассировка</span>
+    <span class="sublabel">layout.go</span>
+  </div>
+
+  <!-- Abstractor -->
+  <div class="node node--module" style="left:348px; top:370px; width:200px; height:48px;">
+    <span class="label">RTL-абстракция</span>
+    <span class="sublabel">abstractor.go</span>
+  </div>
+
+  <!-- Cellgen -->
+  <div class="node node--module" style="left:185px; top:445px; width:240px; height:42px;">
+    <span class="label">Генерация моделей ячеек</span>
+    <span class="sublabel">cellgen.go</span>
+  </div>
+
+  <!-- Falstad.go -->
+  <div class="node node--module" style="left:170px; top:510px; width:270px; height:42px;">
+    <span class="label">Формирование выходного файла</span>
+    <span class="sublabel">falstad.go</span>
+  </div>
+
+  <!-- Gate output -->
+  <div class="node node--output-data" style="left:65px; top:574px; width:200px; height:32px;">
+    <span class="label" style="font-weight:400;">Вентильная схема (Falstad)</span>
+  </div>
+
+  <!-- RTL output -->
+  <div class="node node--output-data" style="left:345px; top:574px; width:200px; height:32px;">
+    <span class="label" style="font-weight:400;">RTL-схема (Falstad)</span>
+  </div>
+
+  <!-- ===== RIGHT: SIMULATION BRANCH ===== -->
+  <div class="group group--sim" style="left:630px; top:126px; width:340px; height:392px;"></div>
+  <div class="group__label" style="position:absolute; top:132px; left:644px; font-family:'PT Sans Narrow',sans-serif; font-weight:700; font-size:15px; color:var(--green-text); z-index:5;">ВЕТВЬ ПОВЕДЕНЧЕСКОЙ СИМУЛЯЦИИ</div>
+
+  <!-- Verilator -->
+  <div class="node node--tool-green" style="left:700px; top:175px; width:200px; height:36px;">
+    <span class="label">Компилятор Verilator</span>
+  </div>
+
+  <!-- SystemC -->
+  <div class="node node--tool-green" style="left:690px; top:280px; width:220px; height:36px;">
+    <span class="label">Среда исполнения SystemC</span>
+  </div>
+
+  <!-- VCD -->
+  <div class="node node--output-data" style="left:695px; top:390px; width:210px; height:32px;">
+    <span class="label" style="font-weight:400;">Временная диаграмма (VCD)</span>
+  </div>
+
+  <!-- ===== OUTPUT COMPONENTS ===== -->
+  <div class="group group--results" style="left:28px; top:726px; width:942px; height:68px;"></div>
+  <div class="group__label" style="position:absolute; top:730px; left:42px; font-family:'PT Sans Narrow',sans-serif; font-weight:700; font-size:13px; color:var(--orange-text); z-index:5;">ВЫХОДНЫЕ ПРЕДСТАВЛЕНИЯ</div>
+
+  <div class="node node--output" style="left:48px; top:748px; width:230px; height:36px;">
+    <span class="label" style="font-size:12px;">Интерактивная симуляция вентильной схемы</span>
+  </div>
+
+  <div class="node node--output" style="left:318px; top:748px; width:230px; height:36px;">
+    <span class="label" style="font-size:12px;">Интерактивная симуляция RTL-схемы</span>
+  </div>
+
+  <div class="node node--output" style="left:700px; top:748px; width:240px; height:36px;">
+    <span class="label" style="font-size:12px;">Просмотр временных диаграмм (GTKWave)</span>
+  </div>
+
+  <!-- ===== SVG ARROWS ===== -->
+  <svg class="arrows" viewBox="0 0 1190 880">
+    <defs>
+      <marker id="ah" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <path d="M0,0.5 L7,3 L0,5.5 Z" fill="var(--line-color)"/>
+      </marker>
+      <marker id="ahd" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <path d="M0,0.5 L7,3 L0,5.5 Z" fill="var(--line-dash)"/>
+      </marker>
+    </defs>
+
+    <!-- Input → split -->
+    <line x1="595" y1="90" x2="595" y2="112" stroke="var(--line-color)" stroke-width="1.8"/>
+
+    <!-- Split horizontal -->
+    <line x1="315" y1="112" x2="800" y2="112" stroke="var(--line-color)" stroke-width="1.8"/>
+
+    <!-- Split → Yosys -->
+    <line x1="315" y1="112" x2="315" y2="160" stroke="var(--line-color)" stroke-width="1.8" marker-end="url(#ah)"/>
+    <text x="275" y="140" font-size="11" fill="var(--text-secondary)" font-family="PT Sans">исходный код</text>
+
+    <!-- Split → Verilator -->
+    <line x1="800" y1="112" x2="800" y2="175" stroke="var(--line-color)" stroke-width="1.8" marker-end="url(#ah)"/>
+    <text x="815" y="155" font-size="11" fill="var(--text-secondary)" font-family="PT Sans">исходный код</text>
+
+    <!-- Yosys → JSON -->
+    <line x1="315" y1="196" x2="315" y2="218" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+    <text x="323" y="212" font-size="10" fill="var(--text-secondary)" font-family="JetBrains Mono" font-style="italic">write_json</text>
+
+    <!-- JSON → Parser -->
+    <line x1="315" y1="250" x2="315" y2="300" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- Parser → Layout -->
+    <path d="M265,342 L265,358 L168,370" fill="none" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- Parser → Abstractor -->
+    <path d="M365,342 L365,358 L448,370" fill="none" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- Cellgen → Layout (dashed) -->
+    <path d="M260,445 L168,418" fill="none" stroke="var(--line-dash)" stroke-width="1.2" stroke-dasharray="6,3" marker-end="url(#ahd)"/>
+    <text x="178" y="440" font-size="10" fill="var(--line-dash)" font-family="PT Sans">модели</text>
+
+    <!-- Cellgen → Abstractor (dashed) -->
+    <path d="M355,445 L448,418" fill="none" stroke="var(--line-dash)" stroke-width="1.2" stroke-dasharray="6,3" marker-end="url(#ahd)"/>
+    <text x="388" y="440" font-size="10" fill="var(--line-dash)" font-family="PT Sans">модели</text>
+
+    <!-- Layout → Falstad.go -->
+    <path d="M168,418 L168,440 L260,510" fill="none" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- Abstractor → Falstad.go -->
+    <path d="M448,418 L448,440 L360,510" fill="none" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- Falstad.go → Gate output -->
+    <path d="M260,552 L165,574" fill="none" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- Falstad.go → RTL output -->
+    <path d="M360,552 L445,574" fill="none" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- Gate output → component -->
+    <line x1="165" y1="606" x2="163" y2="748" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- RTL output → component -->
+    <line x1="445" y1="606" x2="433" y2="748" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+
+    <!-- Verilator → SystemC -->
+    <line x1="800" y1="211" x2="800" y2="280" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+    <text x="808" y="250" font-size="10" fill="var(--text-secondary)" font-family="JetBrains Mono" font-style="italic">C++ / SystemC</text>
+
+    <!-- SystemC → VCD -->
+    <line x1="800" y1="316" x2="800" y2="390" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+    <text x="808" y="358" font-size="10" fill="var(--text-secondary)" font-family="PT Sans">трассировка</text>
+
+    <!-- VCD → component -->
+    <line x1="800" y1="422" x2="820" y2="748" stroke="var(--line-color)" stroke-width="1.5" marker-end="url(#ah)"/>
+  </svg>
+</div>
+</body>
+</html>

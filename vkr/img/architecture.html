@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Структурная схема программной системы</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<style>
+  body { margin: 0; background: #fff; font-family: 'Segoe UI', Arial, sans-serif; }
+  svg { display: block; margin: 20px auto; }
+  .title { font-size: 18px; font-weight: 600; fill: #222; text-anchor: middle; }
+  .group-label { font-size: 13px; font-weight: 600; text-anchor: start; }
+  .node-rect { rx: 8; ry: 8; stroke-width: 1.5; }
+  .node-label { font-size: 11px; fill: #222; text-anchor: middle; dominant-baseline: central; }
+  .node-sub { font-size: 9.5px; fill: #666; text-anchor: middle; dominant-baseline: central; }
+  .note-shape { stroke-width: 1.2; }
+  .arrow { stroke-width: 1.4; fill: none; marker-end: url(#arrowhead); }
+  .arrow-dashed { stroke-width: 1.2; fill: none; stroke-dasharray: 6,3; marker-end: url(#arrowhead-gray); }
+  .arrow-label { font-size: 9.5px; fill: #555; }
+  .group-rect { rx: 12; ry: 12; fill-opacity: 0.35; stroke-width: 1.5; }
+  .component-shape { rx: 6; ry: 6; stroke-width: 1.5; }
+</style>
+</head>
+<body>
+<div id="app">
+  <svg :width="W" :height="H" :viewBox="`0 0 ${W} ${H}`" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#555"/>
+      </marker>
+      <marker id="arrowhead-gray" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#999"/>
+      </marker>
+    </defs>
+
+    <text :x="W/2" y="30" class="title">Структурная схема программной системы</text>
+
+    <!-- Вход -->
+    <g v-bind="noteAttrs(W/2, 60, 260, 36, '#fff8e0', '#ccaa44')">
+      <rect/><text class="node-label">Описание на Verilog / SystemVerilog</text>
+    </g>
+
+    <!-- Группа: ветвь синтеза -->
+    <rect :x="30" y="120" :width="W/2-10" :height="H-260" class="group-rect" fill="#e8eeff" stroke="#4466aa"/>
+    <text x="45" y="140" class="group-label" fill="#4466aa">Ветвь синтеза</text>
+
+    <!-- Yosys -->
+    <g v-bind="boxAttrs(SX, 160, 180, 42, '#dde8ff', '#4466aa')">
+      <rect/><text class="node-label" font-weight="600">Синтезатор Yosys</text>
+    </g>
+
+    <!-- JSON -->
+    <g v-bind="noteAttrs(SX, 230, 200, 36, '#fff8e0', '#ccaa44')">
+      <rect/><text class="node-label">Список соединений (JSON)</text>
+    </g>
+
+    <!-- Группа: конвертер -->
+    <rect :x="50" y="285" :width="W/2-50" :height="370" class="group-rect" fill="#eef3ff" stroke="#88aadd"/>
+    <text x="65" y="305" class="group-label" fill="#6688bb">Конвертер (Go)</text>
+
+    <!-- Модуль разбора -->
+    <g v-bind="boxAttrs(SX, 320, 200, 42, '#f0f4ff', '#4466aa')">
+      <rect/>
+      <text class="node-label" dy="-7">Разбор списка соединений</text>
+      <text class="node-sub" dy="8">yosys.go</text>
+    </g>
+
+    <!-- layout + abstractor -->
+    <g v-bind="boxAttrs(SX-95, 395, 160, 50, '#f0f4ff', '#4466aa')">
+      <rect/>
+      <text class="node-label" dy="-7">Размещение и</text>
+      <text class="node-label" dy="8">трассировка</text>
+      <text class="node-sub" dy="22">layout.go</text>
+    </g>
+
+    <g v-bind="boxAttrs(SX+95, 395, 160, 50, '#f0f4ff', '#4466aa')">
+      <rect/>
+      <text class="node-label" dy="-7">RTL-абстракция</text>
+      <text class="node-sub" dy="8">abstractor.go</text>
+    </g>
+
+    <!-- cellgen -->
+    <g v-bind="boxAttrs(SX, 475, 180, 42, '#f0f4ff', '#4466aa')">
+      <rect/>
+      <text class="node-label" dy="-7">Генерация моделей ячеек</text>
+      <text class="node-sub" dy="8">cellgen.go</text>
+    </g>
+
+    <!-- falstad.go -->
+    <g v-bind="boxAttrs(SX, 545, 200, 42, '#f0f4ff', '#4466aa')">
+      <rect/>
+      <text class="node-label" dy="-7">Формирование выходного файла</text>
+      <text class="node-sub" dy="8">falstad.go</text>
+    </g>
+
+    <!-- Выходы синтеза -->
+    <g v-bind="noteAttrs(SX-90, 620, 170, 36, '#e8ffe0', '#66aa44')">
+      <rect/><text class="node-label">Вентильная схема</text>
+    </g>
+    <g v-bind="noteAttrs(SX+90, 620, 170, 36, '#e8ffe0', '#66aa44')">
+      <rect/><text class="node-label">RTL-схема</text>
+    </g>
+
+    <!-- Группа: ветвь симуляции -->
+    <rect :x="W/2+30" y="120" :width="W/2-60" :height="H-260" class="group-rect" fill="#eeffee" stroke="#44aa66"/>
+    <text :x="W/2+45" y="140" class="group-label" fill="#44aa66">Ветвь поведенческой симуляции</text>
+
+    <!-- Verilator -->
+    <g v-bind="boxAttrs(RX, 200, 200, 42, '#ddffe8', '#44aa66')">
+      <rect/><text class="node-label" font-weight="600">Компилятор Verilator</text>
+    </g>
+
+    <!-- SystemC -->
+    <g v-bind="boxAttrs(RX, 320, 200, 42, '#ddffe8', '#44aa66')">
+      <rect/><text class="node-label" font-weight="600">Среда исполнения SystemC</text>
+    </g>
+
+    <!-- VCD -->
+    <g v-bind="noteAttrs(RX, 440, 200, 36, '#e8ffe0', '#66aa44')">
+      <rect/><text class="node-label">Временная диаграмма (VCD)</text>
+    </g>
+
+    <!-- Компоненты вывода -->
+    <g v-bind="compAttrs(SX-90, H-95, 170, 48)">
+      <rect/>
+      <text class="node-label" dy="-7">Falstad: вентильная</text>
+      <text class="node-label" dy="8">симуляция</text>
+    </g>
+    <g v-bind="compAttrs(SX+90, H-95, 170, 48)">
+      <rect/>
+      <text class="node-label" dy="-7">Falstad: RTL-</text>
+      <text class="node-label" dy="8">симуляция</text>
+    </g>
+    <g v-bind="compAttrs(RX, H-95, 170, 48)">
+      <rect/>
+      <text class="node-label" dy="-7">GTKWave: временные</text>
+      <text class="node-label" dy="8">диаграммы</text>
+    </g>
+
+    <!-- Стрелки: вход -->
+    <path :d="arrowV(W/2, 78, SX, 160)" class="arrow" stroke="#555"/>
+    <path :d="arrowV(W/2, 78, RX, 200)" class="arrow" stroke="#555"/>
+    <text :x="SX-30" y="125" class="arrow-label">исходный код</text>
+    <text :x="W/2+30" y="125" class="arrow-label">исходный код</text>
+
+    <!-- Стрелки: ветвь синтеза -->
+    <line :x1="SX" y1="181" :x2="SX" y2="212" class="arrow" stroke="#555"/>
+    <text :x="SX+10" y="200" class="arrow-label">write_json</text>
+
+    <line :x1="SX" y1="248" :x2="SX" y2="299" class="arrow" stroke="#555"/>
+
+    <path :d="`M${SX},341 L${SX},365 L${SX-95},370`" class="arrow" stroke="#555"/>
+    <path :d="`M${SX},341 L${SX},365 L${SX+95},370`" class="arrow" stroke="#555"/>
+
+    <!-- cellgen связи (пунктир) -->
+    <path :d="`M${SX-40},475 L${SX-95},445`" class="arrow-dashed" stroke="#999"/>
+    <path :d="`M${SX+40},475 L${SX+95},445`" class="arrow-dashed" stroke="#999"/>
+    <text :x="SX-85" y="468" class="arrow-label">модели</text>
+    <text :x="SX+55" y="468" class="arrow-label">модели</text>
+
+    <!-- layout/abstractor → falstad.go -->
+    <path :d="`M${SX-95},420 L${SX-95},435 L${SX-30},524`" class="arrow" stroke="#555"/>
+    <path :d="`M${SX+95},420 L${SX+95},435 L${SX+30},524`" class="arrow" stroke="#555"/>
+
+    <!-- falstad.go → выходы -->
+    <path :d="`M${SX-30},566 L${SX-90},602`" class="arrow" stroke="#555"/>
+    <path :d="`M${SX+30},566 L${SX+90},602`" class="arrow" stroke="#555"/>
+
+    <!-- выходы → компоненты -->
+    <line :x1="SX-90" y1="638" :x2="SX-90" :y2="H-119" class="arrow" stroke="#555"/>
+    <line :x1="SX+90" y1="638" :x2="SX+90" :y2="H-119" class="arrow" stroke="#555"/>
+
+    <!-- Стрелки: ветвь симуляции -->
+    <line :x1="RX" y1="221" :x2="RX" y2="299" class="arrow" stroke="#555"/>
+    <text :x="RX+10" y="265" class="arrow-label">C++ / SystemC</text>
+
+    <line :x1="RX" y1="341" :x2="RX" y2="422" class="arrow" stroke="#555"/>
+    <text :x="RX+10" y="385" class="arrow-label">трассировка</text>
+
+    <line :x1="RX" y1="458" :x2="RX" :y2="H-119" class="arrow" stroke="#555"/>
+  </svg>
+</div>
+
+<script>
+const {createApp} = Vue
+createApp({
+  data() {
+    return { W: 720, H: 820 }
+  },
+  computed: {
+    SX() { return this.W/4 + 15 },
+    RX() { return this.W*3/4 }
+  },
+  methods: {
+    boxAttrs(cx, cy, w, h, fill, stroke) {
+      return {
+        transform: `translate(${cx},${cy})`,
+        innerHTML: `<rect class="node-rect" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}"/>`
+      }
+    },
+    noteAttrs(cx, cy, w, h, fill, stroke) {
+      return {
+        transform: `translate(${cx},${cy})`,
+        innerHTML: `<rect class="note-shape" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="4" ry="4" fill="${fill}" stroke="${stroke}"/>`
+      }
+    },
+    compAttrs(cx, cy, w, h) {
+      return {
+        transform: `translate(${cx},${cy})`,
+        innerHTML: `<rect class="component-shape" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" fill="#ffe8e0" stroke="#cc6644"/>`
+      }
+    },
+    arrowV(x1, y1, x2, y2) {
+      const my = (y1+y2)/2
+      return `M${x1},${y1} L${x1},${my} L${x2},${my} L${x2},${y2}`
+    }
+  }
+}).mount('#app')
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 560">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="700" height="560" fill="#fafafa"/>
+
+  <!-- SystemC Kernel -->
+  <rect x="50" y="30" width="600" height="60" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
+  <text x="350" y="55" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#1976d2">Ядро симуляции SystemC</text>
+  <text x="350" y="75" text-anchor="middle" font-family="Arial" font-size="11" fill="#555">управление временем, диспетчеризация процессов, дельта-циклы</text>
+
+  <!-- Arrow from kernel -->
+  <line x1="200" y1="90" x2="200" y2="139" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="500" y1="90" x2="500" y2="139" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+  <!-- TLM Components Block -->
+  <rect x="50" y="140" width="250" height="180" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
+  <text x="175" y="165" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#388e3c">TLM-компоненты</text>
+
+  <!-- TLM Memory -->
+  <rect x="70" y="180" width="100" height="40" rx="4" fill="#c8e6c9" stroke="#2e7d32" stroke-width="1"/>
+  <text x="120" y="205" text-anchor="middle" font-family="Arial" font-size="11" fill="#1b5e20">TLM Память</text>
+
+  <!-- TLM Timer -->
+  <rect x="180" y="180" width="100" height="40" rx="4" fill="#c8e6c9" stroke="#2e7d32" stroke-width="1"/>
+  <text x="230" y="205" text-anchor="middle" font-family="Arial" font-size="11" fill="#1b5e20">TLM Таймер</text>
+
+  <!-- TLM Peripherals -->
+  <rect x="70" y="235" width="100" height="40" rx="4" fill="#c8e6c9" stroke="#2e7d32" stroke-width="1"/>
+  <text x="120" y="260" text-anchor="middle" font-family="Arial" font-size="11" fill="#1b5e20">TLM UART</text>
+
+  <rect x="180" y="235" width="100" height="40" rx="4" fill="#c8e6c9" stroke="#2e7d32" stroke-width="1"/>
+  <text x="230" y="260" text-anchor="middle" font-family="Arial" font-size="11" fill="#1b5e20">TLM GPIO</text>
+
+  <!-- TLM Bus label -->
+  <text x="175" y="300" text-anchor="middle" font-family="Arial" font-size="10" fill="#555">b_transport() / TLM 2.0</text>
+
+  <!-- RTL Components Block -->
+  <rect x="400" y="140" width="250" height="180" rx="8" fill="#fff3e0" stroke="#f57c00" stroke-width="2"/>
+  <text x="525" y="165" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#f57c00">RTL-модели (Verilator)</text>
+
+  <!-- CPU Module -->
+  <rect x="420" y="180" width="210" height="55" rx="4" fill="#ffe0b2" stroke="#e65100" stroke-width="1"/>
+  <text x="525" y="200" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#e65100">Vservile (RISC-V CPU)</text>
+  <text x="525" y="220" text-anchor="middle" font-family="Arial" font-size="10" fill="#bf360c">скомпилирован из Verilog в C++</text>
+
+  <!-- Signal Interface -->
+  <rect x="420" y="250" width="210" height="35" rx="4" fill="#ffecb3" stroke="#ff8f00" stroke-width="1"/>
+  <text x="525" y="273" text-anchor="middle" font-family="Arial" font-size="10" fill="#e65100">clk, rst, wb_adr, wb_dat, wb_we, wb_ack</text>
+
+  <!-- Verilator label -->
+  <text x="525" y="305" text-anchor="middle" font-family="Arial" font-size="10" fill="#555">verilator --sc --exe</text>
+
+  <!-- Bridge Block -->
+  <rect x="225" y="360" width="250" height="70" rx="8" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="350" y="385" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#7b1fa2">Мостовой модуль</text>
+  <text x="350" y="405" text-anchor="middle" font-family="Arial" font-size="11" fill="#4a148c">WbToTlmBridge</text>
+  <text x="350" y="420" text-anchor="middle" font-family="Arial" font-size="10" fill="#555">Wishbone сигналы ⟷ TLM транзакции</text>
+
+  <!-- Arrows to bridge -->
+  <line x1="175" y1="320" x2="175" y2="380" stroke="#333" stroke-width="1.5"/>
+  <line x1="175" y1="380" x2="225" y2="380" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <line x1="525" y1="320" x2="525" y2="380" stroke="#333" stroke-width="1.5"/>
+  <line x1="525" y1="380" x2="475" y2="380" stroke="#333" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <!-- Test Environment -->
+  <rect x="50" y="480" width="600" height="60" rx="8" fill="#fce4ec" stroke="#c2185b" stroke-width="2"/>
+  <text x="350" y="505" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#c2185b">Тестовое окружение (C++)</text>
+  <text x="350" y="525" text-anchor="middle" font-family="Arial" font-size="10" fill="#555">генерация стимулов • мониторинг • эталонная модель • VCD трассировка</text>
+
+  <!-- Arrow from bridge to test -->
+  <line x1="350" y1="430" x2="350" y2="479" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+</svg>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg width="480" height="290" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<defs>
+  <symbol id="airport">
+    <circle cx="4" cy="4" r="3" stroke-width="1.5" stroke="black" fill="white"/>
+  </symbol>
+</defs>
+
+<!-- Spannbaum -->
+
+<line x1="200.1" y1="91.8" x2="20.5" y2="177.1" style="stroke:blue; stroke-width:2px;"/>
+<line x1="199.6" y1="90.4" x2="327.8" y2="20.0" style="stroke:blue; stroke-width:2px;"/>
+<line x1="199.6" y1="90.4" x2="344.0" y2="274.6" style="stroke:blue; stroke-width:2px;"/>
+<line x1="344.0" y1="274.6" x2="463.2" y2="218.7" style="stroke:blue; stroke-width:2px;"/>
+
+<!-- Steinerbaum -->
+
+<line x1="372.9" y1="221.2" x2="291.0" y2="87.9" style="stroke:red; stroke-width:2px;"/>
+<line x1="372.9" y1="221.2" x2="463.2" y2="218.7" style="stroke:red; stroke-width:2px;"/>
+<line x1="372.9" y1="221.2" x2="344.0" y2="274.6" style="stroke:red; stroke-width:2px;"/>
+<line x1="199.6" y1="90.4" x2="291.0" y2="87.9" style="stroke:red; stroke-width:2px;"/>
+<line x1="199.1" y1="89.0" x2="19.5" y2="174.3" style="stroke:red; stroke-width:2px;"/>
+<line x1="327.8" y1="20.0" x2="291.0" y2="87.9" style="stroke:red; stroke-width:2px;"/>
+
+<!-- VIE    <use x="581.5"  y="35.7" xlink:href="#airport" /> -->
+
+<text x="191" y="115" style="font-size: 20; font-family: Arial, sans-serif; font-weight: bold">S</text>
+<!-- SZG --><use x="195.6" y="86.4" xlink:href="#airport"/>
+<text x="28" y="199" style="font-size: 20; font-family: Arial, sans-serif; font-weight: bold">I</text>
+<!-- INN --><use x="16.0" y="171.7" xlink:href="#airport"/>
+<text x="458" y="206" style="font-size: 20; font-family: Arial, sans-serif; font-weight: bold">G</text>
+<!-- GRZ --><use x="459.2" y="214.7" xlink:href="#airport"/>
+<text x="336" y="34" style="font-size: 20; font-family: Arial, sans-serif; font-weight: bold">L</text>
+<!-- LNZ --><use x="323.8" y="16.0" xlink:href="#airport"/>
+<text x="323" y="283" style="font-size: 20; font-family: Arial, sans-serif; font-weight: bold">K</text>
+<!-- KLU --><use x="340.0" y="270.6" xlink:href="#airport"/>
+
+</svg>
